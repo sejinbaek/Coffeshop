@@ -24,12 +24,31 @@ public class MemberDao {
 	@Value("${spring.datasource.password}")
 	private String DB_PW;
 	
+	//로그인
+	public Member login(Member m) throws Exception {
+		System.out.println("MemberDao login() 호출됨");
+		Class.forName(DB_DRIVER);
+		Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PW); //필수적으로 고쳐야 하는 부분
+		
+		PreparedStatement stmt = con.prepareStatement("select * from member where email =? and pwd =?"); //statement는 set메서드 X
+		
+		stmt.setString(1, m.getEmail());
+		stmt.setString(2, m.getPwd()); //setString하면 자동으로 싱글커테이션이 찍힘.
+		
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next()) {
+			String nickname = rs.getString("nickname");
+			m.setNickname(nickname);
+		}
+		return m;
+	}
 	
-	//JDBC 6단계
+	
+	//회원가입
 	public void insertMember(Member m) throws Exception {
 		System.out.println("MemberDao insertMember() 호출됨");
 		Class.forName(DB_DRIVER);
-		Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PW); //필수적으로 고쳐야 하는 부분
+		Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PW);
 		PreparedStatement stmt = con.prepareStatement("insert into member(email, pwd, nickname) values(?,?,?)");
 		stmt.setString(1, m.getEmail());
 		stmt.setString(2, m.getPwd());
