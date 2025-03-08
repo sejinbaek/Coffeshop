@@ -25,9 +25,9 @@ public class MemberController {
 		Map<String, String> responseMap = new HashMap<>();
 		
 		try {
-			memberService.login(m);
+			m = memberService.login(m);
 			String nickname = m.getNickname();
-			if(m != null && nickname != null && !nickname.trim().equals("")) {
+			if(m != null && nickname != null && !nickname.trim().isEmpty()) {
 				responseMap.put("nickname", nickname);
 			} else {
 				responseMap.put("msg", "다시 로그인 해주세요");
